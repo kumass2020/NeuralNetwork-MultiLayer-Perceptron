@@ -137,7 +137,8 @@ class Sigmoid:
 # 입력층 : 64개
 # 은닉층 : 5개
 # 출력층 : 10개
-sigmoid = Sigmoid()
+sigmoid1 = Sigmoid()
+sigmoid2 = Sigmoid()
 offset = 0
 W = 1
 eta = 0.1
@@ -160,18 +161,31 @@ while epoch < 10000:
     for i in range(10):  # ㄱ, ㄴ, ㄷ, ...
         for k in range(5):  # A[0], A[1], ...
             print("k: " + str(k))
+            test4 = X[i].flatten()
+            test5 = W1[:, k]
             A.insert(k, np.dot(X[i].flatten(), W1[:, k]))
             print(A[0].shape)
             print(type(A[0]))
             print(type(Z))
             print("")
             # test1 = sigmoid.forward(A[k])
-            Z.insert(k, sigmoid.forward(A[k]))
+            Z.insert(k, sigmoid1.forward(A[k]))
             # Z = np.array(Z).flatten()
+        test3 = Z
         for j in range(10):
             print("j: " + str(j))
-            O.insert(j, np.dot(np.array(Z[i]).flatten, W2[:, j]))
-            delta2[]
+            test1 = np.array(Z).flatten()
+            test2 = W2[:, j]
+            O.insert(j, np.dot(np.array(Z).flatten(), W2[:, j]))
+            O[j] = sigmoid2.forward(O[j])
+            delta2[j] = O[j] * (1 - O[j]) * (1 - O[j])
+        for m in range(5):
+            print("m: " + str(m))
+            summ = 0
+            for n in range(10):
+                print("n: " + str(n))
+                summ += delta2[n] * W2[m][n]
+            delta1[m] = Z[m] * (1 - Z[m]) * summ
 
     print("")
     epoch += 1
