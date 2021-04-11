@@ -143,17 +143,36 @@ W = 1
 eta = 0.1
 X, D, W1, W2 = init_network()
 epoch = 0
+
+# 은닉층 오차
+delta1 = np.array([0, 0, 0, 0, 0])
+# 출력층 오차
+delta2 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 A = []
 Z = []
+O = []
 
 test = X[0]
 test = test.flatten()
 
 while epoch < 10000:
-    for i in range(5)
-        A.insert(i, np.dot(X[i], W1))
-        # A1 = np.dot(X[1], W1)
-        print(A[0].shape)
-        # print(A1.shape)
+    print("epoch: " + str(epoch))
+    for i in range(10):  # ㄱ, ㄴ, ㄷ, ...
+        for k in range(5):  # A[0], A[1], ...
+            print("k: " + str(k))
+            A.insert(k, np.dot(X[i].flatten(), W1[:, k]))
+            print(A[0].shape)
+            print(type(A[0]))
+            print(type(Z))
+            print("")
+            # test1 = sigmoid.forward(A[k])
+            Z.insert(k, sigmoid.forward(A[k]))
+            # Z = np.array(Z).flatten()
+        for j in range(10):
+            print("j: " + str(j))
+            O.insert(j, np.dot(np.array(Z[i]).flatten, W2[:, j]))
+            delta2[]
+
+    print("")
     epoch += 1
 
