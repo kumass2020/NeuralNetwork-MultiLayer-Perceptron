@@ -1,8 +1,9 @@
 import numpy as np
 
+
 def init_network():
-    network = {}
-    network['']
+    # network = {}
+    # network['']
 
     x1 = np.array([[1, 1, 1, 1, 1, 1, 1, 1],
                    [1, 1, 1, 1, 1, 1, 1, 1],
@@ -105,8 +106,8 @@ def init_network():
     d10 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
 
     # 가중치
-    W1 = np.full((64,5), 1)
-    W2 = np.full((5,10), 1)
+    W1 = np.full((64, 5), 1)
+    W2 = np.full((5, 10), 1)
 
     # # 은닉층 활성화 함수(Sigmoid) 전, 후
     # A = np.array([0, 0, 0, 0, 0])
@@ -141,6 +142,18 @@ offset = 0
 W = 1
 eta = 0.1
 X, D, W1, W2 = init_network()
+epoch = 0
+A = []
+Z = []
 
-while True:
-    A1 = np.dot(X[1], W)
+test = X[0]
+test = test.flatten()
+
+while epoch < 10000:
+    for i in range(5)
+        A.insert(i, np.dot(X[i], W1))
+        # A1 = np.dot(X[1], W1)
+        print(A[0].shape)
+        # print(A1.shape)
+    epoch += 1
+
