@@ -1,12 +1,8 @@
 import numpy as np
 
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
 def init_network():
     network = {}
     network['']
-
 
     x1 = np.array([[1, 1, 1, 1, 1, 1, 1, 1],
                    [1, 1, 1, 1, 1, 1, 1, 1],
@@ -108,10 +104,43 @@ def init_network():
                     [0, 0, 0, 0, 0, 0, 1, 1]])
     d10 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
 
+    # 가중치
+    W1 = np.full((64,5), 1)
+    W2 = np.full((5,10), 1)
+
+    # # 은닉층 활성화 함수(Sigmoid) 전, 후
+    # A = np.array([0, 0, 0, 0, 0])
+    # Z = np.array([0, 0, 0, 0, 0])
+
+    # X: 입력패턴, D: 출력패턴
     X = [x1, x2, x3, x4, x5, x6, x7, x8, x9, x10]
     D = [d1, d2, d3, d4, d5, d6, d7, d8, d9, d10]
 
-    return X, D
+    return X, D, W1, W2
 
 
-X, D = init_network()
+class Sigmoid:
+    def __init__(self):
+        self.out = None
+
+    def forward(self, x):
+        out = 1 / (1 + np.exp(-x))
+        self.out = out
+        return out
+
+    def backward(self, dout):
+        dx = dout + (1.0 - self.out) * self.out
+        return dx
+
+
+# 입력층 : 64개
+# 은닉층 : 5개
+# 출력층 : 10개
+sigmoid = Sigmoid()
+offset = 0
+W = 1
+eta = 0.1
+X, D, W1, W2 = init_network()
+
+while True:
+    A1 = np.dot(X[1], W)
