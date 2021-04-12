@@ -5,3 +5,6 @@ def sigmoid(x):
 
 print(sigmoid(5))
 print(sigmoid(0.8))
+a = np.full(5, 0.5)
+print(a)
+print(round(0.99999999, 3))

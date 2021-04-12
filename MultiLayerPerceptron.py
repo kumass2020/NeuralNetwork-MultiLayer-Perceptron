@@ -1,4 +1,5 @@
 import numpy as np
+from math import ceil, floor
 
 
 def init_network():
@@ -106,8 +107,8 @@ def init_network():
     d10 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 1])
 
     # 가중치
-    W1 = np.full((64, 5), 1)
-    W2 = np.full((5, 10), 1)
+    W1 = np.full((64, 5), 1.0)
+    W2 = np.full((5, 10), 1.0)
 
     # # 은닉층 활성화 함수(Sigmoid) 전, 후
     # A = np.array([0, 0, 0, 0, 0])
@@ -125,7 +126,7 @@ class Sigmoid:
         self.out = None
 
     def forward(self, x):
-        out = 1 / (1 + np.exp(-x))
+        out = 1.0 / (1.0 + np.exp(-x))
         self.out = out
         return out
 
@@ -147,32 +148,37 @@ X, D, W1, W2 = init_network()
 epoch = 0
 
 # 은닉층 오차
-delta1 = np.array([0, 0, 0, 0, 0])
+# delta1 = np.array([0, 0, 0, 0, 0])
+delta1 = np.full((10, 5), 0.0)
 # 출력층 오차
-delta2 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-A = [0 for i in range(5)]
-Z = [0 for i in range(5)]
-O = [0 for i in range(10)]
+# delta2 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+delta2 = np.full((10, 10), 0.0)
+A = [0.0 for i in range(5)]
+Z = [0.0 for i in range(5)]
+O = np.full((10, 10), 0.0)
 
 test = X[0]
 test = test.flatten()
 
-while epoch < 10000:
+while epoch < 2000:
     print("epoch: " + str(epoch))
     for i in range(10):  # ㄱ, ㄴ, ㄷ, ...
-        print("i: " + str(i))
+        # print("i: " + str(i))
         for k in range(5):  # A[0], A[1], ...
-            print("k: " + str(k))
+            # print("k: " + str(k))
             test4 = X[i].flatten()
             test5 = W1[:, k]
             # A.insert(k, np.dot(X[i].flatten(), W1[:, k]))
             A[k] = np.dot(X[i].flatten(), W1[:, k])
-            if k == 0:
-                A[k] -= 20
-            print(A[0].shape)
-            print(type(A[0]))
-            print(type(Z))
-            print("")
+
+            # # Test
+            # if k == 0:
+            #     A[k] -= 30
+
+            # print(A[0].shape)
+            # print(type(A[0]))
+            # print(type(Z))
+            # print("")
 
             # test1 = sigmoid.forward(A[k])
 
@@ -182,30 +188,113 @@ while epoch < 10000:
             # Z = np.array(Z).flatten()
         test3 = Z
         for j in range(10):
-            print("j: " + str(j))
+            # print("j: " + str(j))
             test1 = np.array(Z).flatten()
             test2 = W2[:, j]
             # O.insert(j, np.dot(np.array(Z).flatten(), W2[:, j]))
-            O[j] = np.dot(np.array(Z).flatten(), W2[:, j])
-            O[j] = sigmoid2.forward(O[j])
-            test6 = O[j]
-            test7 = 1 - O[j]
-            test8 = (D[i])[j] - O[j]
-            delta2[j] = O[j] * (1 - O[j]) * ((D[i])[j] - O[j])
+            O[i][j] = np.dot(np.array(Z).flatten(), W2[:, j])
+            O[i][j] = sigmoid2.forward(O[i][j])
+            test6 = O[i][j]
+            test7 = 1 - O[i][j]
+            test8 = (D[i])[j] - O[i][j]
+            delta2[j] = O[i][j] * (1 - O[i][j]) * ((D[i])[j] - O[i][j])
         for m in range(5):
-            print("m: " + str(m))
+            # print("m: " + str(m))
             summ = 0
             for n in range(10):
-                print("n: " + str(n))
+                # print("n: " + str(n))
                 summ += delta2[n] * W2[m][n]
             delta1[m] = Z[m] * (1 - Z[m]) * summ
+        # 역전파 1
         for n in range(5):
             for o in range(10):
                 W2[n][o] = W2[n][o] + eta * delta2[o] * Z[n]
+        # 역전파 2
         for k in range(64):
             for j in range(5):
                 W1[k][j] = W1[k][j] + eta * delta1[j] * (X[i]).flatten()[k]
 
+        # 출력 유니트
+        # print(type(O[i]))
+        # for k in range(10):
+        #     O[i] = float(O[i])
+        #     pos = O.index(min(O))
+        #     if pos == 0:
+        #         str1 = "ㄱ"
+        #     elif pos == 1:
+        #         str1 = "ㄴ"
+        #     elif pos == 2:
+        #         str1 = "ㄷ"
+        #     elif pos == 3:
+        #         str1 = "ㄹ"
+        #     elif pos == 4:
+        #         str1 = "ㅁ"
+        #     elif pos == 5:
+        #         str1 = "ㅂ"
+        #     elif pos == 6:
+        #         str1 = "ㅅ"
+        #     elif pos == 7:
+        #         str1 = "ㅇ"
+        #     elif pos == 8:
+        #         str1 = "ㅈ"
+        #     elif pos == 9:
+        #         str1 = "ㅋ"
+        # print(str(O[i]) + " " + str1)
+        # # print(O)
+
     print("")
     epoch += 1
 
+noise_pattern = np.array([[1, 1, 0, 1, 1, 1, 1, 1],
+                          [1, 1, 1, 1, 1, 1, 1, 0],
+                          [0, 0, 1, 0, 0, 0, 1, 1],
+                          [0, 0, 0, 0, 0, 0, 1, 1],
+                          [0, 0, 0, 0, 0, 1, 0, 1],
+                          [0, 0, 0, 0, 0, 0, 1, 1],
+                          [0, 0, 0, 0, 0, 0, 1, 1],
+                          [0, 0, 0, 0, 0, 0, 1, 1]])
+
+noise_pattern = np.array([[1, 1, 1, 1, 1, 1, 1, 1],
+                          [1, 1, 1, 1, 1, 1, 1, 1],
+                          [0, 0, 0, 0, 0, 0, 1, 1],
+                          [1, 1, 1, 1, 1, 1, 1, 1],
+                          [1, 1, 1, 1, 1, 1, 1, 1],
+                          [1, 1, 0, 0, 0, 0, 0, 0],
+                          [1, 1, 1, 1, 1, 1, 1, 1],
+                          [1, 1, 1, 1, 1, 1, 1, 1]])
+
+# 학습된 가중치를 기반으로 글자 분류
+for k in range(5):
+    A[k] = np.dot(noise_pattern.flatten(), W1[:, k])
+    Z[k] = sigmoid1.forward(A[k])
+for j in range(10):
+    O[j] = np.dot(np.array(Z).flatten(), W2[:, j])
+    O[j] = sigmoid2.forward(O[j])
+
+# 출력 유니트
+for k in range(10):
+    O[i] = float(O[i])
+    pos = O.index(min(O))
+    if pos == 0:
+        str1 = "ㄱ"
+    elif pos == 1:
+        str1 = "ㄴ"
+    elif pos == 2:
+        str1 = "ㄷ"
+    elif pos == 3:
+        str1 = "ㄹ"
+    elif pos == 4:
+        str1 = "ㅁ"
+    elif pos == 5:
+        str1 = "ㅂ"
+    elif pos == 6:
+        str1 = "ㅅ"
+    elif pos == 7:
+        str1 = "ㅇ"
+    elif pos == 8:
+        str1 = "ㅈ"
+    elif pos == 9:
+        str1 = "ㅋ"
+    else:
+        print("error")
+print(str(O[pos]) + " " + str1)
